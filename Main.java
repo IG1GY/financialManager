@@ -45,6 +45,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -77,14 +79,17 @@ public class Main extends Application{
         Button btn = (Button) mapper.get("economicReport");
 
         btn.setOnMouseClicked((event) -> {
-                try{
-                    FXMLLoader loader2 = new FXMLLoader(getClass().getResource("alert.fxml"));
-                    Parent parent = loader2.load();
-                    Alert alert = new Alert(parent);
-                }
-                catch(IOException exc){
-                    System.out.println(exc);
-                }
+            try{
+                FXMLLoader loader2 = new FXMLLoader(getClass().getResource("alert.fxml"));
+                Alert alert = new Alert(loader2);
+
+                while(!alert.didFinish) ;
+                System.out.println(alert.getInfo());
+            }
+            catch(IOException e){
+
+                System.out.println(e);
+            }
         });
 
         /*
@@ -105,35 +110,103 @@ public class Main extends Application{
     }
 
     //don't judge me
-    public class Alert{
+    protected class Alert{
 
-        private Controler_Class controler;
-        private Stage stage;
+        boolean didFinish = false;
+        private Stage mstage;
+        private FXMLLoader mloader;
+        private String source = "";
+        private String information = "";
+        private int amount = 0;
 
-        public Alert(Parent root) {
+        public Alert(FXMLLoader mloader) throws IOException{
 
-            Controler_Class clas = new Controler_Class(root);
-            controler = clas;
-
-            Scene scene = new Scene(root);
+            this.mloader = mloader;
+            Scene scene = new Scene(mloader.load());
             Stage stage = new Stage();
+
+            Map<String, Object> mapper = mloader.getNamespace();
+            Button cancel = (Button) mapper.get("cancel");
+            Button submit = (Button) mapper.get("submit");
+            ComboBox box = (ComboBox) mapper.get("source");
+
+            box.getItems().addAll(
+                "Cash",
+                "Bank",
+                "Mastercard",
+                "Bitcoin"
+            );
+
+            cancel.setOnAction(e -> {
+
+                didFinish = true;
+                mstage.close();
+            });
+            submit.setOnAction(e -> {
+
+                TextField information = (TextField) mapper.get("description");
+                TextField  amount = (TextField) mapper.get("amount");
+
+                this.information = information.getText();
+                //handle what to do when this is not an integer...
+                this.amount = Integer.parseInt(amount.getText());
+                didFinish = true;
+                mstage.close();
+            });
 
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("financial report");
             stage.setScene(scene);
             stage.setResizable(false);
 
-            this.stage = stage;
+            this.mstage = stage;
             stage.showAndWait();
+        }
+
+        public String getInfo(){
+
+            String st = "source: " + source + "\n\n" +
+                        "information: " + information + "\n\n" +
+                        "amount: " +amount + "\n\n";
+            return st;
         }
 
         private class Controler_Class{
 
-            Parent root;
+            String source = "";
+            String information = "";
+            int amount = 0;
 
-            public Controler_Class(Parent root){
+            public Controler_Class(){
 
-                Map<String, Object> mapper = root.getNamespace();
+                Map<String, Object> mapper = mloader.getNamespace();
+                Button cancel = (Button) mapper.get("cancel");
+                Button submit = (Button) mapper.get("submit");
+                ComboBox box = (ComboBox) mapper.get("source");
+
+                box.getItems().addAll(
+                    "Cash",
+                    "Bank",
+                    "Mastercard",
+                    "Bitcoin"
+                );
+
+                cancel.setOnAction(e -> {
+
+                    didFinish = true;
+                    mstage.close();
+                });
+                submit.setOnAction(e -> {
+
+                    TextField information = (TextField) mapper.get("description");
+                    TextField  amount = (TextField) mapper.get("amount");
+
+                    this.information = information.getText();
+                    //handle what to do when this is not an integer...
+                    this.amount = Integer.parseInt(amount.getText());
+                    didFinish = true;
+                    mstage.close();
+                });
             }
         }
     }
