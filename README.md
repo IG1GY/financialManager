@@ -17,6 +17,6 @@ TODO:
 
 *) for some reason "import Alert" doesn't work. had to create a private class. need to find a wae to fix that.
 
-*) I'm using atom and ide-java for this. however, I don't know the wae to make ide-java to recognize javafx. this causes issues.
+*) I'm using atom and ide-java for this. however, I don't know the wae to make ide-java recognize javafx. this causes issues.
 
 *) there's a NullPointerException I need to handle when calling the "financial report" button. fix that --urgent
