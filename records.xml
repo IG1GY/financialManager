@@ -1,0 +1,20 @@
+<Sources>
+    <Source value="Cash">
+        <Transactions>
+            <Transaction type="+">
+                <description>initial value</description>
+                <amount>
+                    <currency type="nis" int="50" />
+                </amount>
+            </Transaction>
+        </Transactions>
+    </Source>
+    <Source value="Bank Account">
+        <Transactions>
+        </Transactions>
+    </Source>
+    <Source value="Bitcoin">
+        <Transactions>
+        </Transactions>
+    </Source>
+</Sources>
