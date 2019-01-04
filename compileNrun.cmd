@@ -1,7 +1,7 @@
 
 @echo off
 
-javac --module-path "c:\Program Files\Java\javafx-sdk-11.0.1\lib" --add-modules=javafx.controls,javafx.fxml %1.java
+javac --module-path "c:\Program Files\Java\javafx-sdk-11.0.1\lib" --add-modules=javafx.controls,javafx.fxml *.java
 java --module-path "c:\Program Files\Java\javafx-sdk-11.0.1\lib" --add-modules=javafx.controls,javafx.fxml %1
 
 goto end
