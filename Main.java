@@ -47,7 +47,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+<<<<<<< HEAD
 import javafx.scene.control.TextArea;
+=======
+>>>>>>> 6e3bc248c83fd16c3bce3690a5a5a354e27ad533
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -112,6 +115,7 @@ public class Main extends Application{
 
     //don't judge me
     protected class Alert{
+<<<<<<< HEAD
 
         boolean didFinish = false;
         boolean canceled = false;
@@ -180,6 +184,66 @@ public class Main extends Application{
                         "information: " + information + "\n\n" +
                         "amount: " + amount + "\n\n";
             return st;
+=======
+
+        boolean didFinish = false;
+        private Stage mstage;
+        private FXMLLoader mloader;
+        private String source = "";
+        private String information = "";
+        private int amount = 0;
+
+        public Alert(FXMLLoader mloader) throws IOException{
+
+            this.mloader = mloader;
+            Scene scene = new Scene(mloader.load());
+            Stage stage = new Stage();
+
+            Map<String, Object> mapper = mloader.getNamespace();
+            Button cancel = (Button) mapper.get("cancel");
+            Button submit = (Button) mapper.get("submit");
+            ComboBox box = (ComboBox) mapper.get("source");
+
+            box.getItems().addAll(
+                "Cash",
+                "Bank",
+                "Mastercard",
+                "Bitcoin"
+            );
+
+            cancel.setOnAction(e -> {
+
+                didFinish = true;
+                mstage.close();
+            });
+            submit.setOnAction(e -> {
+
+                TextField information = (TextField) mapper.get("description");
+                TextField  amount = (TextField) mapper.get("amount");
+
+                this.information = information.getText();
+                //handle what to do when this is not an integer...
+                this.amount = Integer.parseInt(amount.getText());
+                didFinish = true;
+                mstage.close();
+            });
+
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("financial report");
+            stage.setScene(scene);
+            stage.setResizable(false);
+
+            this.mstage = stage;
+            stage.showAndWait();
+>>>>>>> 6e3bc248c83fd16c3bce3690a5a5a354e27ad533
+        }
+
+        public String getInfo(){
+
+            String st = "source: " + source + "\n\n" +
+                        "information: " + information + "\n\n" +
+                        "amount: " +amount + "\n\n";
+            return st;
         }
 
         private class Controler_Class{
@@ -209,7 +273,11 @@ public class Main extends Application{
                 });
                 submit.setOnAction(e -> {
 
+<<<<<<< HEAD
                     TextArea information = (TextArea) mapper.get("description");
+=======
+                    TextField information = (TextField) mapper.get("description");
+>>>>>>> 6e3bc248c83fd16c3bce3690a5a5a354e27ad533
                     TextField  amount = (TextField) mapper.get("amount");
 
                     this.information = information.getText();
