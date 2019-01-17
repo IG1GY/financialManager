@@ -12,7 +12,9 @@ import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
 
+import java.io.InputStream;
 //just copied most of it from tutorial's point
 public class XML{
 
@@ -20,17 +22,18 @@ public class XML{
     Document document;
     File file;
 
-    public XML() throws Exception{
+    private XML(File file){
 
         try{
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(file = new File("records.xml"));
+            document = builder.parse(this.file = file);
         //Document document = builder.parse();
         }catch(Exception e){
 
             throw e;
         }
+
         root = document.getDocumentElement();
     }
 
@@ -50,17 +53,25 @@ public class XML{
         NodeList list2 = root.getElementsByTagName("Source");
         for(int i=0; i<list2.getLength(); i++){
 
-            if(((Element)list2.item(i)).getAttribute("value").startsWith(source)) return (Element) list2.item(i);
+            if(((Element)list2.item(i)).getAttribute("value").contains(source)) return (Element) list2.item(i);
         }
         return null;
     }
+
 /*
-<Transaction datetime="">
-    <description>initial value</description>
-    <amount>
-        <currency type="nis" int="50" />
-    </amount>
-</Transaction>
+<Transactions>
+    <Transaction datetime="">
+        <description>initial value</description>
+        <amount>
+            <currency type="nis" int="50" />
+        </amount>
+    </Transaction>
+</Transactions>
+<Sum>
+    <currency type="nis">
+        (float)
+    </currency>
+</Sum>
 */
     public void addTransaction_noSave(Transaction transaction){
 
@@ -70,11 +81,21 @@ public class XML{
 
         Element ntransaction = document.createElement("Transaction");
         ntransaction.setAttribute("datetime", Long.toString(System.currentTimeMillis()));
-
         Element description = document.createElement("description");
         description.appendChild(document.createTextNode(transaction.information));
-
         Element amount = document.createElement("amount");
+
+        /*get the sum*/
+        Element sum = (Element) elem.getChildNodes().item(1);
+
+        NodeList currencies = sum.getChildNodes();
+        HashMap<String, Integer> currency_sums = new HashMap<String, Integer>();
+        for(int i=0; i<currencies.getLength(); i++){
+
+            String type = ((Element) currencies.item(i)).getAttribute("type");
+            int namount = Integer.parseInt(((Element) currencies.item(i)).getTextContent());
+            currency_sums.put(type, namount);
+        }
 
         for(Transaction.Currency entry : transaction.amount){
                 Element currency = document.createElement("currency");
@@ -82,6 +103,16 @@ public class XML{
                 currency.setAttribute("type", entry.coinType);
                 currency.setAttribute("int", Integer.toString(entry.inte));
                 amount.appendChild(currency);
+
+                currency_sums.put(entry.coinType, currency_sums.containsKey(entry.coinType) ?
+                                    currency_sums.get(entry.coinType) : 0
+                                    + entry.inte);
+        }
+
+        for(int i=0; i < currencies.getLength(); i++){
+
+            Element current = (Element) currencies.item(i);
+            current.setTextContent(Integer.toString(currency_sums.get(current.getAttribute("type"))));
         }
 
         ntransaction.appendChild(description);
@@ -104,8 +135,8 @@ public class XML{
     }
 
     private void save(){
-        try{
 
+        try{
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(document);
@@ -132,7 +163,6 @@ public class XML{
     public static void main(String[] args){
 
         try{
-
             XML xml = new XML();
             System.out.println(xml.getSources());
             xml.addTransaction(new Transaction("Bank Account", "first source",
