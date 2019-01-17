@@ -6,6 +6,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Element;
 
 import java.io.*;
 import java.util.List;
@@ -33,7 +34,7 @@ public class XML{
         root = document.getDocumentElement();
     }
 
-    public List<String> getSources() throws Exception{
+    public List<String> getSources() {
 
         ArrayList list = new ArrayList();
         NodeList list2 = root.getElementsByTagName("Source");
@@ -44,6 +45,15 @@ public class XML{
         return list;
     }
 
+    private Element getSource(String source) {
+
+        NodeList list2 = root.getElementsByTagName("Source");
+        for(int i=0; i<list2.getLength(); i++){
+
+            if(((Element)list2.item(i)).getAttribute("value").startsWith(source)) return (Element) list2.item(i);
+        }
+        return null;
+    }
 /*
 <Transaction datetime="">
     <description>initial value</description>
@@ -52,63 +62,85 @@ public class XML{
     </amount>
 </Transaction>
 */
+    public void addTransaction_noSave(Transaction transaction){
+
+        Element elem = this.getSource(transaction.source);
+        System.out.println("element: " + elem);
+        Element Transactions = (Element) elem.getElementsByTagName("Transactions").item(0);
+
+        Element ntransaction = document.createElement("Transaction");
+        ntransaction.setAttribute("datetime", Long.toString(System.currentTimeMillis()));
+
+        Element description = document.createElement("description");
+        description.appendChild(document.createTextNode(transaction.information));
+
+        Element amount = document.createElement("amount");
+
+        for(Transaction.Currency entry : transaction.amount){
+                Element currency = document.createElement("currency");
+
+                currency.setAttribute("type", entry.coinType);
+                currency.setAttribute("int", Integer.toString(entry.inte));
+                amount.appendChild(currency);
+        }
+
+        ntransaction.appendChild(description);
+        ntransaction.appendChild(amount);
+
+        Transactions.appendChild(ntransaction);
+    }
 
     public void addTransactions(List<Transaction> transactions){
 
-        NodeList list2 = root.getElementsByTagName("Source");
-        Element source = null;
+        for(Transaction transaction : transactions)
+            this.addTransaction_noSave(transaction);
+        this.save();
+    }
 
-        for(int i=0; i<list2.getLength() && elem == null; i++)
-            if(list2.item(i).getAttributeNode("value") == transaction.source) elem = (Element) list2.item(i);
+    public void addTransaction(Transaction transaction){
 
-        if(elem == null)
-            throw new Exception("no such source: " + source);
-
-        Element Transactions = (Element) elem.getElementsByTagName("Transactions").item(0);
-
-        for(Transaction transaction : transactions){
-
-            Element ntransaction = document.createElement("Transaction");
-            ntransaction.setAttribute("datetime", Long.toString(System.currentTimeMillis()));
-
-            Element description = document.createElement("description");
-            description.appendChild(document.createTextNode(transaction.information));
-
-            Element amount = document.createElement("amount");
-
-            for(Map.Entry<String, Integer> entry : transaction.amount.entrySet()){
-                Element currency = document.createElement("currency");
-
-                currency.setAttribute("type", entry.getKey());
-                currency.setAttrobute("type", entry.getValue());
-                amount.appendChild(currency);
-            }
-
-            ntransaction.appendChild(description);
-            ntransaction.appendChild(amount);
-
-            Transactions.appendChild(ntransaction);
-        }
+        this.addTransaction_noSave(transaction);
         this.save();
     }
 
     private void save(){
+        try{
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource source = new DOMSource(document);
-        StreamResult result = new StreamResult(this.file);
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(document);
+            StreamResult result = new StreamResult(file);
 
-        transformer.transform(source, result);
+            transformer.transform(source, result);
+        }catch(Exception e){
+
+            e.printStackTrace();
+        }
     }
+
+    public Transaction[] getTransactions(String source, int start, int end){
+
+        Element source_elem = getSource(source);
+        NodeList list = source_elem.getElementsByTagName("Transaction");
+
+        Transaction[] transactions = new Transaction[end - start + 1];
+        for(int i=start; i < end; i++) transactions[i - start] = Transaction.fromElement((Element) list.item(i));
+
+        return transactions;
+    }
+
     public static void main(String[] args){
 
         try{
+
             XML xml = new XML();
             System.out.println(xml.getSources());
+            xml.addTransaction(new Transaction("Bank Account", "first source",
+                new Transaction.Currency[]{ new Transaction.Currency(-500, "nis")}, System.currentTimeMillis()));
+
         }catch(Exception e){
 
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }

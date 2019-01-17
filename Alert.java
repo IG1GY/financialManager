@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 
 import java.util.Map;
+import java.util.LinkedList;
 //thanks to a guy named bucky. (yeah thanks btw).
 //used as reference: https://github.com/buckyroberts/Source-Code-from-Tutorials/blob/master/JavaFX/005_creatingAlertBoxes/AlertBox.java
 //to Modality and the showAndWait function;
@@ -92,4 +93,13 @@ public class Alert{
                     "amount: " + amount + "\n\n";
         return st;
     }
+
+    /*
+    public Transaction toTransaction(){
+
+        LinkedList<Transaction.Currency> list = new LinkedList();
+        list = list.add(new Transaction.Currency(inte, coinType))
+        return new Transaction(this.source, this.information, , System.currentTimeMillis());
+    }
+    */
 }

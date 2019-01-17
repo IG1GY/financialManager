@@ -1,16 +1,11 @@
-<Sources>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Sources>
     <Source value="Cash">
         <Transactions>
-            <Transaction type="+">
-                <description>initial value</description>
-                <amount>
-                    <currency type="nis" int="50" />
-                </amount>
-            </Transaction>
         </Transactions>
     </Source>
     <Source value="Bank Account">
         <Transactions>
+            <Transaction datetime="1547690610739"><description>first source</description><amount><currency int="-500" type="nis"/></amount></Transaction>
         </Transactions>
     </Source>
     <Source value="Bitcoin">

@@ -60,8 +60,8 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) throws Exception{
 
-        final int width = 300;
-        final int height = 450;
+        final int width = 300 * 4;
+        final int height = 450 * 2;
 
         stage.setTitle("hello mofos");
 
@@ -87,6 +87,8 @@ public class Main extends Application{
 
                 while(!alert.didFinish) ;
                 System.out.println(alert.getInfo());
+
+                
             }
             catch(IOException e){
 
