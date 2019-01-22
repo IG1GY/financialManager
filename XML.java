@@ -22,16 +22,16 @@ public class XML{
     Document document;
     File file;
 
-    private XML(File file){
+    public XML(String fileLocation){
 
         try{
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(this.file = file);
+            document = builder.parse(this.file = new File(fileLocation));
         //Document document = builder.parse();
         }catch(Exception e){
 
-            throw e;
+            e.printStackTrace();
         }
 
         root = document.getDocumentElement();
@@ -47,7 +47,15 @@ public class XML{
         }
         return list;
     }
+    /*
+    <Source value="value">
+        <Transactions>
+        </Transactions>
+        <Sum>
 
+        </Sum>
+    </Source>
+    */
     private Element getSource(String source) {
 
         NodeList list2 = root.getElementsByTagName("Source");
@@ -55,7 +63,18 @@ public class XML{
 
             if(((Element)list2.item(i)).getAttribute("value").contains(source)) return (Element) list2.item(i);
         }
-        return null;
+
+        //if no such Source exists, create a new one.
+        Element src = this.document.createElement("Source");
+        src.setAttribute("value", source);
+        Element transactions = this.document.createElement("Transactions");
+        Element sum = this.document.createElement("Sum");
+
+        src.appendChild(transactions);
+        src.appendChild(sum);
+        root.appendChild(sum);
+
+        return src;
     }
 
 /*
@@ -92,9 +111,15 @@ public class XML{
         HashMap<String, Integer> currency_sums = new HashMap<String, Integer>();
         for(int i=0; i<currencies.getLength(); i++){
 
-            String type = ((Element) currencies.item(i)).getAttribute("type");
-            int namount = Integer.parseInt(((Element) currencies.item(i)).getTextContent());
-            currency_sums.put(type, namount);
+            try{
+
+                String type = ((Element) currencies.item(i)).getAttribute("type");
+                int namount = Integer.parseInt(((Element) currencies.item(i)).getAttribute("int"));
+                currency_sums.put(type, namount);
+            }catch(Exception e){
+
+                System.out.println(currencies.item(i));
+            }
         }
 
         for(Transaction.Currency entry : transaction.amount){
@@ -110,9 +135,13 @@ public class XML{
         }
 
         for(int i=0; i < currencies.getLength(); i++){
+            try{
+                Element current = (Element) currencies.item(i);
+                current.setAttribute("int", Integer.toString(currency_sums.get(current.getAttribute("type"))));
+            }catch(Exception e){
 
-            Element current = (Element) currencies.item(i);
-            current.setTextContent(Integer.toString(currency_sums.get(current.getAttribute("type"))));
+                System.out.println(currencies.item(i));
+            }
         }
 
         ntransaction.appendChild(description);
@@ -159,7 +188,7 @@ public class XML{
 
         return transactions;
     }
-
+   /*
     public static void main(String[] args){
 
         try{
@@ -173,4 +202,5 @@ public class XML{
             e.printStackTrace();
         }
     }
+    */
 }

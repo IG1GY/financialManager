@@ -54,6 +54,9 @@ import javafx.scene.layout.VBox;
 
 import java.util.Map;
 import java.io.IOException;
+import java.io.File;
+
+import java.util.Scanner;
 
 public class Main extends Application{
 
@@ -81,18 +84,21 @@ public class Main extends Application{
         Button btn = (Button) mapper.get("economicReport");
 
         btn.setOnMouseClicked((event) -> {
+
             try{
+
                 FXMLLoader loader2 = new FXMLLoader(getClass().getResource("alert.fxml"));
                 Alert alert = new Alert(loader2);
 
                 while(!alert.didFinish) ;
-                System.out.println(alert.getInfo());
-
+                if(alert.canceled) return;
                 
+                XML xml = new XML("records.xml");
+                xml.addTransaction(alert.toTransaction());
             }
-            catch(IOException e){
+            catch(Exception e){
 
-                System.out.println(e);
+                e.printStackTrace();
             }
         });
 
@@ -110,6 +116,37 @@ public class Main extends Application{
 
     public static void main(String[] args){
 
-        launch();
+        try{
+
+            launch();
+        }catch(Exception e){
+
+            e.printStackTrace();
+            Scanner sc = new Scanner(System.in);
+            while(true){
+                System.out.println("exit? (y/n):");
+                String res = sc.nextLine();
+                if(res.toLowerCase().startsWith("y"))
+                    System.exit(1);
+            }
+        }
     }
 }
+
+
+/*
+    TODO:
+    task 1 - database
+
+        1) make XML more generic so it'll allow for empty xml files.
+        2) learn how to use mysql with java.
+        3) create a sample database.
+        4) create a class to interact with the sample database.
+
+    task 2 - graphs
+
+        1) create a simple class for displaying information on a graphs
+        2) allow for multiple graphs
+        3) link each graph to a different source, and create one automatically foreach source.
+
+*/

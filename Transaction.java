@@ -62,5 +62,10 @@ public class Transaction{
             this.inte = inte;
             this.coinType = coinType;
         }
+
+        public String toString(){
+
+            return Integer.toString(inte) + "|" + coinType; 
+        }
     }
 }

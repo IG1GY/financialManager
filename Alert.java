@@ -18,7 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 
 import java.util.Map;
-import java.util.LinkedList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 //thanks to a guy named bucky. (yeah thanks btw).
 //used as reference: https://github.com/buckyroberts/Source-Code-from-Tutorials/blob/master/JavaFX/005_creatingAlertBoxes/AlertBox.java
 //to Modality and the showAndWait function;
@@ -31,7 +32,8 @@ public class Alert{
     private FXMLLoader mloader;
     private String source = "";
     private String information = "";
-    private int amount = 0;
+    private Transaction.Currency amount = null;
+    private Map<String, Object> mapper;
 
     public Alert(FXMLLoader mloader) throws IOException{
 
@@ -39,7 +41,7 @@ public class Alert{
         Scene scene = new Scene(mloader.load());
         Stage mstage = new Stage();
 
-        Map<String, Object> mapper = mloader.getNamespace();
+        mapper = mloader.getNamespace();
 
         System.out.println(mapper);
         Button cancel = (Button) mapper.get("cancel");
@@ -70,7 +72,7 @@ public class Alert{
 
             this.information = information.getText();
             //handle what to do when this is not an integer...
-            this.amount = Integer.parseInt(amount.getText());
+            this.amount = toCurrency(amount.getText());
             this.source = box.getValue().toString();
             didFinish = true;
             mstage.close();
@@ -86,7 +88,7 @@ public class Alert{
         mstage.showAndWait();
     }
 
-    public String getInfo(){
+    public String toString(){
 
         String st = "source: " + source + "\n\n" +
                     "information: " + information + "\n\n" +
@@ -94,12 +96,33 @@ public class Alert{
         return st;
     }
 
-    /*
     public Transaction toTransaction(){
 
-        LinkedList<Transaction.Currency> list = new LinkedList();
-        list = list.add(new Transaction.Currency(inte, coinType))
-        return new Transaction(this.source, this.information, , System.currentTimeMillis());
+        return new Transaction(this.source, this.information,
+        new Transaction.Currency[]{ this.amount },
+        System.currentTimeMillis());
     }
-    */
+
+    // regex : "(\d+)\s*(\w+)?". example: 320nis | 320 nis
+    public Transaction.Currency toCurrency(String str){
+
+        Pattern ptrn = Pattern.compile("(\\d+)\\s*(\\w+)?");
+        Matcher m = ptrn.matcher(str);
+        if(m.matches()){
+
+            int inte = Integer.parseInt(m.group(1));
+            String coinType;
+            if(m.groupCount() == 2)
+                coinType = m.group(2);
+            else
+                coinType = "default";
+                
+            return new Transaction.Currency(inte, coinType);
+        }else{
+
+            System.out.println("invalid input! amount doesn't match the pattern! exiting...");
+            this.canceled = true;
+            return null;
+        }
+    }
 }
