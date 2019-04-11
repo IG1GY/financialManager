@@ -1,30 +1,34 @@
+REM for some reason this doesn't work, java still doesn't recognize mysql to be within the classpath.
+REM so I started learning to use gradle.
+
 
 @echo off
 
-javac --module-path "c:\Program Files\Java\javafx-sdk-11.0.1\lib" --add-modules=javafx.controls,javafx.fxml *.java
-java --module-path "c:\Program Files\Java\javafx-sdk-11.0.1\lib" --add-modules=javafx.controls,javafx.fxml %1
+if "%DEBUG%" == "" (
 
-goto end
+    @echo off
+) else (
 
-import os
+    @echo on
+)
 
-task = "None"
-with open('info.md', 'r') as readl:
-    for line in readl:
-        print(line)
-        if "compile:" in line:
-            task = "compile"
-            continue
-        elif "run:" in line:
-            task = "run"
-            continue
+REM using modules by javafx
 
-        if task == "compile":
-            print("compiling: %s" % line)
-            os.system('javac --module-path "c:\Program Files\Java\javafx-sdk-11.0.1\lib" --add-modules=javafx.controls,javafx.fxml %s' % line)
-        elif task == "run":
-            print("running: %s" % line)
-            os.system('java --module-path "c:\Program Files\Java\javafx-sdk-11.0.1\lib" --add-modules=javafx.controls,javafx.fxml %s' % line)
+set modulePath=c:\Program Files\Java\javafx-sdk-11.0.1\lib
+set mPATH=c:\projects\java\financialmanager\java\
+set CLASSPATH=%mPATH%;%mPATH%mysql-connector-java\mysql-connector-java.jar;
+
+set extraParams= -cp "%CLASSPATH%" --module-path "%modulePath%" --add-modules=javafx.controls,javafx.fxml
+javac %extraParams% java\*.java
+
+
+REM goto end if compilation was unsuccessful or if no run class was defined.
+if "%1"=="" (
+    echo no run class was defined, exiting...
+    goto end
+)
+
+java %extraParams% %1
 
 :end
 @echo on

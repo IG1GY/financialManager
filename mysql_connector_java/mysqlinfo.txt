@@ -1,0 +1,63 @@
+add a new user:
+use mysql
+INSERT INTO user
+(host, user, password,
+select_priv, insert_priv, update_priv)
+VALUES ('localhost', 'guest',
+PASSWORD('guest123'), 'Y', 'Y', 'Y');
+
+ok, next - table count:
+
++------------------------+
+| Tables_in_transactions |
++------------------------+
+| amount                 |
+| coins                  |
+| source                 |
+| transaction            |
++------------------------+
+
+transaction
++-------------+------------+------+-----+---------+-------+
+| Field       | Type       | Null | Key | Default | Extra |
++-------------+------------+------+-----+---------+-------+
+| datetime    | bigint(20) | NO   | PRI | NULL    |       |
+| description | text       | YES  |     | NULL    |       |
+| amount_id   | int(11)    | YES  |     | NULL    |       |
+| source_id   | int(11)    | YES  | MUL | NULL    |       |
++-------------+------------+------+-----+---------+-------+
+
+                            ||
+                            \/
+
+source
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| sum   | int(11)     | NO   | MUL | NULL    |                |
+| name  | varchar(15) | NO   |     | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+
+                              /\
+                              ||
+                              \/
+
+amount
++----------+---------+------+-----+---------+----------------+
+| Field    | Type    | Null | Key | Default | Extra          |
++----------+---------+------+-----+---------+----------------+
+| amountID | int(11) | NO   | PRI | NULL    | auto_increment |
+| sourceID | int(11) | NO   | MUL | NULL    |                |
++----------+---------+------+-----+---------+----------------+
+
+                            ||
+                            \/
+
+coins
++----------+------------+------+-----+---------+-------+
+| Field    | Type       | Null | Key | Default | Extra |
++----------+------------+------+-----+---------+-------+
+| coinType | varchar(6) | NO   | PRI | NULL    |       |
+| amountID | int(11)    | NO   | MUL | NULL    |       |
++----------+------------+------+-----+---------+-------+
