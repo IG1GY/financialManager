@@ -101,7 +101,7 @@ public class Main extends Application{
                 System.out.println(alert.toString());
 
                 if(getClass().getClassLoader().getResource("xml/records.xml") == null) System.out.println("xml resource not found");
-                XML xml = new XML(getClass().getClassLoader().getResource("xml/records.xml").getPath());
+                XML xml = new XML("records.xml");
                 xml.addTransaction(alert.toTransaction());
             }
             catch(Exception e){

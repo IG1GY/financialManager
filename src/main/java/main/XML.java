@@ -18,7 +18,36 @@ import java.util.HashMap;
 
 import java.io.InputStream;
 
-//just copied most of it from tutorial's point
+/***
+    so, this is the XML file, supposed to handle xml.
+    it's main functions are:
+        (for input)
+        addTransaction_noSave(Transaction)
+        save()
+
+        addTransactions(Transaction[] | List<Transaction>)
+        *) addTransaction(Transaction)
+        (for output)
+        getSources()
+        getTransactions(Source, start, end){
+            source - source name; String.
+            start;end - int: get transactions from source start to end.
+            [end not inclusive.]
+        }
+
+        note:
+            of course that with the large xml files it's supposed to handle,
+            constantly saving is really slow and inefficient. so either use addTransaction_noSave+save
+            or addTransactions to save in bulk.
+            also, this is supplemented by the fact that the xml shouldn't be over 1000-10,000 transactions long imo.
+            beyond that, send it to a cluster or a database for later retrieval.
+
+            also, the transaction seems relatively bulky and overly detailed. it's up to the database implementation
+            to add main details concerning the user. I'm not supposed to be the main user of this. the AI is.
+            this is just for supervising it's actions.
+
+            yes, the class seems a bit messy, but it's well organized via documentation.
+***/
 public class XML{
 
     Element root;
@@ -30,6 +59,8 @@ public class XML{
         try{
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
+
+            //so here's the problem...
             document = builder.parse(this.file = new File(fileLocation));
         //Document document = builder.parse();
         }catch(Exception e){
@@ -80,6 +111,36 @@ public class XML{
         return src;
     }
 
+    public List<Transaction.Currency> getSum(tring source){
+
+            Element elem = this.getSource(source);
+            return getSum(elem);
+        }
+        public List<Transaction.Currency> getSum(Element source){
+
+                Element elem = source;
+                /*get the sum*/
+                Element sum = (Element) elem.getElementsByTagName("Sum").item(0);
+
+                ArrayList<Transaction.Currency> returnCurrencies = new ArrayList<Transaction.Currency>();
+
+                //supposed to contain all available currencies
+                NodeList currencies = sum.getChildNodes();
+                for(int i=0; i<currencies.getLength(); i++){
+
+                    try{
+
+                        String type = ((Element) currencies.item(i)).getAttribute("type");
+                        int inte = Integer.parseInt(((Element) currencies.item(i)).getAttribute("int"));
+                        returnCurrencies.add(new Transaction.Currency(inte, type));
+                    }catch(Exception e){
+
+                        System.out.println(currencies.item(i));
+                    }
+                }
+
+                return returnCurrencies;
+            }
 /*
 <Transactions>
     <Transaction datetime="">
@@ -98,6 +159,8 @@ public class XML{
     public void addTransaction_noSave(Transaction transaction){
 
         Element elem = this.getSource(transaction.source);
+
+        System.out.println("document: " + document);
         System.out.println("element: " + elem);
         Element Transactions = (Element) elem.getElementsByTagName("Transactions").item(0);
 
@@ -110,8 +173,11 @@ public class XML{
         /*get the sum*/
         Element sum = (Element) elem.getElementsByTagName("Sum").item(0);
 
+        //supposed to contain all available currencies
         NodeList currencies = sum.getChildNodes();
         HashMap<String, Integer> currency_sums = new HashMap<String, Integer>();
+
+        //get currencies in sum
         for(int i=0; i<currencies.getLength(); i++){
 
             try{
@@ -132,18 +198,22 @@ public class XML{
                 currency.setAttribute("int", Integer.toString(entry.inte));
                 amount.appendChild(currency);
 
+                if(!currency_sum.containsKey) sum.appendChild(currency);
+
                 currency_sums.put(entry.coinType, currency_sums.containsKey(entry.coinType) ?
                                     currency_sums.get(entry.coinType) : 0
                                     + entry.inte);
         }
 
+        //save sum
         for(int i=0; i < currencies.getLength(); i++){
             try{
                 Element current = (Element) currencies.item(i);
                 current.setAttribute("int", Integer.toString(currency_sums.get(current.getAttribute("type"))));
             }catch(Exception e){
 
-                System.out.println(currencies.item(i));
+                System.out.println("bad currency: " + currencies.item(i));
+                e.printStackTrace();
             }
         }
 
@@ -154,6 +224,12 @@ public class XML{
     }
 
     public void addTransactions(List<Transaction> transactions){
+
+        for(Transaction transaction : transactions)
+            this.addTransaction_noSave(transaction);
+        this.save();
+    }
+    public void addTransactions(Transaction[] transactions){
 
         for(Transaction transaction : transactions)
             this.addTransaction_noSave(transaction);
@@ -174,6 +250,10 @@ public class XML{
             DOMSource source = new DOMSource(document);
             StreamResult result = new StreamResult(file);
 
+            //get and save sum
+
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.transform(source, result);
         }catch(Exception e){
 
@@ -186,7 +266,7 @@ public class XML{
         Element source_elem = getSource(source);
         NodeList list = source_elem.getElementsByTagName("Transaction");
 
-        Transaction[] transactions = new Transaction[end - start + 1];
+        Transaction[] transactions = new Transaction[end - start];
         for(int i=start; i < end; i++) transactions[i - start] = Transaction.fromElement((Element) list.item(i));
 
         return transactions;
