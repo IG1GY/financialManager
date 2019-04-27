@@ -8,6 +8,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.OutputKeys;
 import org.w3c.dom.Element;
 
 import java.io.*;
@@ -90,13 +91,25 @@ public class XML{
         </Sum>
     </Source>
     */
+
+    //I added the hash map when I created the Grapher class.
+    //the grapher class does repeated search, so the hash map
+    //should make repeated search much faster
+    HashMap<String, Element> sources = null;
     private Element getSource(String source) {
 
-        NodeList list2 = root.getElementsByTagName("Source");
-        for(int i=0; i<list2.getLength(); i++){
+        if(sources == null){
 
-            if(((Element)list2.item(i)).getAttribute("value").contains(source)) return (Element) list2.item(i);
+            sources = new HashMap<String, Element>();
+            NodeList list2 = root.getElementsByTagName("Source");
+            for(int i=0; i<list2.getLength(); i++){
+
+                String str = ((Element)list2.item(i)).getAttribute("value");
+                Element elem = (Element) list2.item(i);
+                sources.put(str, elem);
+            }
         }
+        if(sources.containsKey(source)) return sources.get(source);
 
         //if no such Source exists, create a new one.
         Element src = this.document.createElement("Source");
@@ -108,10 +121,11 @@ public class XML{
         src.appendChild(sum);
         root.appendChild(sum);
 
+        sources.put(source, src);
         return src;
     }
 
-    public List<Transaction.Currency> getSum(tring source){
+    public List<Transaction.Currency> getSum(String source){
 
             Element elem = this.getSource(source);
             return getSum(elem);
@@ -198,7 +212,7 @@ public class XML{
                 currency.setAttribute("int", Integer.toString(entry.inte));
                 amount.appendChild(currency);
 
-                if(!currency_sum.containsKey) sum.appendChild(currency);
+                if(! currency_sums.containsKey(entry.coinType)) sum.appendChild(currency);
 
                 currency_sums.put(entry.coinType, currency_sums.containsKey(entry.coinType) ?
                                     currency_sums.get(entry.coinType) : 0
@@ -266,8 +280,25 @@ public class XML{
         Element source_elem = getSource(source);
         NodeList list = source_elem.getElementsByTagName("Transaction");
 
-        Transaction[] transactions = new Transaction[end - start];
-        for(int i=start; i < end; i++) transactions[i - start] = Transaction.fromElement((Element) list.item(i));
+        //transform to list...
+        Transaction[] transactions = new Transaction[Math.abs(end - start)];
+
+        int length = list.getLength();
+        while(start < 0)
+            start += length;
+        while(end < 0)
+            end += length;
+
+        if(start > end){
+
+            //switch start and end
+            start += end;
+            end = start- end;
+            start -= end;
+        }
+
+        for(int i=start; i < end && i < list.getLength(); i++)
+            transactions[i - start] = Transaction.fromElement((Element) list.item(i));
 
         return transactions;
     }

@@ -130,17 +130,42 @@ public class Main extends Application{
 
 /*
     TODO:
+
+    --was nearly
     task 1 - database
 
-        1) make XML more generic so it'll allow for empty xml files.
-        2) learn how to use mysql with java.
-        3) create a sample database.
-        4) create a class to interact with the sample database.
+        1) make XML more generic so it'll allow for empty xml files. |done
+        2) learn how to use mysql with java.                         |done
+        3) create a sample database.                                 |done
+        4) create a class to interact with the sample database.      |need to recreate the database, since it's no longer working.
+
+        --advanced database and xml management:
+
+        1) when xml reaches 1000-10000 entries, output it to the database in bulk, regularly.
+        2) start using the created server for interactions. learn sql cluster to maintain more than one database.
 
     task 2 - graphs
 
-        1) create a simple class for displaying information on a graphs
-        2) allow for multiple graphs
-        3) link each graph to a different source, and create one automatically foreach source.
+        1) create a simple class for displaying information on a line graph |done
+        2) allow for multiple graphs                                        |working on it
+        3) link each graph to a different source, and create one automatically foreach source. |working on it.
 
+    task 3 - server
+
+        1) make the server work with git.   |working on it
+        2) link apache with django.
+        3) learn angular.
+        4) link apache with angular.
+        5) start creating the site.
+
+    task 4 - tasklist
+
+        1) make a task object that saves through xml. have the program constantly maintain time.
+        2) make the program go on startup, create a first build.
+        3) create "task categories" for managing different type of tasks.
+        4) create an android app that basically uses this code. (check whether this is reusable)
+        5) the android app should have a notification system.
+        6) create a calander to add on top of the tasklist.
+
+    task 5 - project manager
 */
