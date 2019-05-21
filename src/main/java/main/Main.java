@@ -85,7 +85,7 @@ public class Main extends Application{
         if(pane != null)
             SplitPane.setResizableWithParent(pane, false);
         else
-            System.out.println("it's null you idiot!");
+            System.out.println("it's null!");
 
         Button btn = (Button) mapper.get("economicReport");
 
@@ -124,6 +124,12 @@ public class Main extends Application{
 
     public static void main(String[] args){
         launch();
+    }
+
+
+
+    public static Element clone(Element elem){
+        
     }
 }
 
@@ -165,7 +171,20 @@ public class Main extends Application{
         3) create "task categories" for managing different type of tasks.
         4) create an android app that basically uses this code. (check whether this is reusable)
         5) the android app should have a notification system.
-        6) create a calander to add on top of the tasklist.
+        6) create a calander to add on top of the tasklist, to work alongside the task list.
 
     task 5 - project manager
+
+        goal -
+             making projects more easy to create and manage
+
+        for ongoing projects:
+            the project manager side of the app is a list of users - groups. each person is in charge of a group
+            and a list of task (linked to tasklist).
+            you click on the group and that person's responsibility is displayed.
+
+        for finished projects:
+            goal -
+                easier, obvious, documentation that's clearly interactable through the machine. allows for clear autocompletion.
+
 */

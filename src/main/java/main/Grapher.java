@@ -4,6 +4,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.Parent;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.SplitPane;
+import javafx.collections.ObservableList;
 
 import javafx.util.StringConverter;
 
@@ -20,13 +24,14 @@ public class Grapher{
     XML xml;
     HashMap<String , LineChart<Number, Number>> charts;
 
+
+    //create standart element:
     public Grapher(FXMLLoader loader, XML xml){
 
         this.loader = loader;
         this.xml = xml;
         this.charts = new HashMap<String, LineChart<Number, Number>>();
     }
-
 
     public LineChart<Number,Number> createGraph(FXMLLoader loader, String source){
 
@@ -42,6 +47,7 @@ public class Grapher{
 
                 return formatted;
             }
+
             //definitely not needed...
             //not implemented because I had to add extra code to catch parse exception for it to compile.
             public Number fromString(String s){
@@ -80,12 +86,25 @@ public class Grapher{
 
     public void addGraph(LineChart chart){
 
-        return;
+        Map<String, Object> mapper = loader.getNamespace();
+        //check to see if works
+        SplitPane pane = new SplitPane();
+        VBox box = (VBox) mapper.get("vbox_grapher");
+        box.getChildren().add()
+    }
+
+    public Element initModule(){
+
+        Map<String, Object> mapper = loader.getNamespace();
+        //check to see if works
+        SplitPane pane = new SplitPane();
+        VBox box = (VBox) mapper.get("vbox_grapher");
     }
 
     public List<LineChart> createGraphes(int range){
 
         LinkedList<LineChart> l = new LinkedList<LineChart>();
+        Element elem = initModule();
         for(String source : xml.getSources()){
             LineChart c = createGraph(loader, source);
             addGraph(c);

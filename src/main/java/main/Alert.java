@@ -22,9 +22,6 @@ import javafx.scene.control.Button;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-//thanks to a guy named bucky. (yeah thanks btw).
-//used as reference: https://github.com/buckyroberts/Source-Code-from-Tutorials/blob/master/JavaFX/005_creatingAlertBoxes/AlertBox.java
-//to Modality and the showAndWait function;
 
 public class Alert{
 
@@ -128,3 +125,10 @@ public class Alert{
         }
     }
 }
+
+/*
+    bug report/todo:
+        remove the toolbar.
+        (if you exit normally the window crashes.
+        only use the cancel button.)
+*/
