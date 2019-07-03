@@ -42,10 +42,15 @@ class Database{
         System.out.println("please enter the username and password for the mysql database");
         Scanner scn = new Scanner(System.in);
 
-        this.username = scn.next();
-        this.password = scn.next();
+        this.username = "financial_manager";
+        this.password = "password";
 
         establishConnection();
+    }
+
+    public List<Transaction> getTransactions(){
+
+        
     }
 
     public void establishConnection(){
@@ -99,6 +104,9 @@ class Database{
     //connecting to it will still be done through the java connector.
     //as for right now, the server must be always on.
     //however, if it crushes you can always via loop: check, restart, and then reconnect.
+
+    //do this through a dos script or by hand, it is really simple tbh...
+    //just : mysqld --console
     public static Thread startServer(){
 
         if(true)    //shut up java, I know what I'm doing!

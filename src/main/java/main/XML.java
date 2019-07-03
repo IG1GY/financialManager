@@ -284,20 +284,19 @@ public class XML{
         Transaction[] transactions = new Transaction[Math.abs(end - start)];
 
         int length = list.getLength();
+        if(length == 0)
+            return transactions;
         while(start < 0)
             start += length;
         while(end < 0)
             end += length;
 
-        if(start > end){
+        int direction = 1;
+        if(start > end)
+            direction = -1;
 
-            //switch start and end
-            start += end;
-            end = start- end;
-            start -= end;
-        }
-
-        for(int i=start; i < end && i < list.getLength(); i++)
+        //might just work
+        for(int i=start; i < end && i < list.getLength(); i += direction)
             transactions[i - start] = Transaction.fromElement((Element) list.item(i));
 
         return transactions;

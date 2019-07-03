@@ -67,6 +67,7 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) throws Exception{
 
+        //load fxml and create basic scene
         final int width = 300 * 4;
         final int height = 450 * 2;
 
@@ -75,6 +76,7 @@ public class Main extends Application{
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/financialManager.fxml"));
 
         if(getClass().getClassLoader().getResource("fxml/financialManager.fxml") == null){ System.out.println("the resource is not found"); return; }
+        XML xml = new XML("records.xml");
 
         Parent root = loader.load();
         Scene scene = new Scene(root, width, height);
@@ -87,6 +89,7 @@ public class Main extends Application{
         else
             System.out.println("it's null!");
 
+        //enable the economic report button
         Button btn = (Button) mapper.get("economicReport");
 
         btn.setOnMouseClicked((event) -> {
@@ -95,13 +98,12 @@ public class Main extends Application{
 
                 FXMLLoader loader2 = new FXMLLoader(getClass().getClassLoader().getResource("fxml/alert.fxml"));
                 Alert alert = new Alert(loader2);
-
+                
                 while(!alert.didFinish) ; //do nothing
                 if(alert.canceled) return;
                 System.out.println(alert.toString());
 
                 if(getClass().getClassLoader().getResource("xml/records.xml") == null) System.out.println("xml resource not found");
-                XML xml = new XML("records.xml");
                 xml.addTransaction(alert.toTransaction());
             }
             catch(Exception e){
@@ -109,6 +111,10 @@ public class Main extends Application{
                 e.printStackTrace();
             }
         });
+
+        //initialize grapher module:
+        Grapher grapher = new Grapher(loader, xml);
+        grapher.initModule();
 
         /*
         ChangeListener<Number> stageSizeListener = (observable, oldValue, newValue) ->
@@ -118,18 +124,13 @@ public class Main extends Application{
         stage.heightProperty().addListener(stageSizeListener);
         */
 
+        //'launch'
         stage.setScene(scene);
         stage.show();
     }
 
     public static void main(String[] args){
         launch();
-    }
-
-
-
-    public static Element clone(Element elem){
-        
     }
 }
 
@@ -150,11 +151,16 @@ public class Main extends Application{
         1) when xml reaches 1000-10000 entries, output it to the database in bulk, regularly.
         2) start using the created server for interactions. learn sql cluster to maintain more than one database.
 
-    task 2 - graphs
+    task 2 - graphs (financial manager)
 
         1) create a simple class for displaying information on a line graph |done
-        2) allow for multiple graphs                                        |working on it
-        3) link each graph to a different source, and create one automatically foreach source. |working on it.
+        2) allow for multiple graphs                                        |done
+        3) link each graph to a different source, and create one automatically foreach source. |done
+
+        *) make sure the scrollbar works right.
+        *) make the enhancement bar work
+        *) create a secure webclient to supervise sources (bank account bitcoint etc)
+
 
     task 3 - server
 
@@ -166,12 +172,12 @@ public class Main extends Application{
 
     task 4 - tasklist
 
-        1) make a task object that saves through xml. have the program constantly maintain time.
-        2) make the program go on startup, create a first build.
-        3) create "task categories" for managing different type of tasks.
-        4) create an android app that basically uses this code. (check whether this is reusable)
-        5) the android app should have a notification system.
-        6) create a calander to add on top of the tasklist, to work alongside the task list.
+        *) make a task object that saves through xml. have the program constantly maintain time.
+        *) make the program go on startup, create a first build.
+        *) create "task categories" for managing different type of tasks.
+        *) create an android app that basically uses this code. (check whether this is reusable)
+        *) the android app should have a notification system.
+        *) create a calander to add on top of the tasklist, to work alongside the task list.
 
     task 5 - project manager
 
@@ -185,6 +191,6 @@ public class Main extends Application{
 
         for finished projects:
             goal -
-                easier, obvious, documentation that's clearly interactable through the machine. allows for clear autocompletion.
+                easier, obvious, documentation that's clearly interactable through the machine. allows for clear autocompletion & development.
 
 */
