@@ -1,34 +1,57 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><Sources>
-    <Source value="Cash">
-        <Transactions>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Sources>
+      
+  <Source value="Cash">
+            
+    <Transactions>
+              
+      <Transaction datetime="1567341293701">
+        <description>paid some cash to someone gay</description>
+        <amount/>
+      </Transaction>
+    </Transactions>
+            
+    <Sum>
+              
+      <currency int="100" type="nis"/>
+    </Sum>
+        
+  </Source>
+      
+  <Source value="Bank Account">
+            
+    <Transactions>
 
         </Transactions>
-        <Sum>
-
-        </Sum>
-    </Source>
-    <Source value="Bank Account">
-        <Transactions>
-
-        </Transactions>
-        <Sum>
+            
+    <Sum>
             
         </Sum>
-    </Source>
-    <Source value="Bitcoin">
-        <Transactions>
+        
+  </Source>
+      
+  <Source value="Bitcoin">
+            
+    <Transactions>
 
         </Transactions>
-        <Sum>
+            
+    <Sum>
 
         </Sum>
-    </Source>
-    <Source value="Mastercard">
-        <Transactions>
+        
+  </Source>
+      
+  <Source value="Mastercard">
+            
+    <Transactions>
 
         </Transactions>
-        <Sum>
+            
+    <Sum>
 
         </Sum>
-    </Source>
+        
+  </Source>
+  
 </Sources>

@@ -10,9 +10,10 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
 
 import javafx.collections.ObservableList;
 
@@ -125,14 +126,24 @@ public class Grapher{
         AnchorPane pane = new AnchorPane();
 
         Label label = new Label();
-        ProgressBar bar = new ProgressBar();
+
+        //should be
+        Slider slider = new Slider();
+        slider.setMin(0);
+        slider.setMax(100);
+        slider.setValue(40);
+        slider.setShowTickLabels(true);
+        slider.setShowTickMarks(true);
+        slider.setMajorTickUnit(50);
+        slider.setMinorTickCount(5);
+        slider.setBlockIncrement(10);
 
         label.setText("descriptor");
         //label, bar set center:
 
         pane.getChildren().add(chart);
         pane.getChildren().add(label);
-        pane.getChildren().add(bar);
+        pane.getChildren().add(slider);
 
         //anchors
         pane.setLeftAnchor(chart, 0.0);
@@ -141,8 +152,8 @@ public class Grapher{
         pane.setLeftAnchor(label, 0.0);
         pane.setRightAnchor(label, 0.0);
         //
-        pane.setLeftAnchor(bar, 12.0);
-        pane.setRightAnchor(bar, 12.0);
+        pane.setLeftAnchor(slider, 12.0);
+        pane.setRightAnchor(slider, 12.0);
         //-----------------------------
 
         //add pane
@@ -166,6 +177,11 @@ public class Grapher{
         //check to see if works
         SplitPane pane = new SplitPane();
         VBox module = (VBox) loader.getNamespace().get("vbox_grapher");
+        ScrollPane module_parent = (ScrollPane) loader.getNamespace().get("vbox_grapher_parent");
+
+        //bug solution (set resizable with parent):
+        module_parent.setFitToHeight(true);
+        module_parent.setFitToWidth(true);
 
         //clear(module);
         createGraphes(-1, module);

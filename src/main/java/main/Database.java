@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -50,7 +51,7 @@ class Database{
 
     public List<Transaction> getTransactions(){
 
-        
+        return null;
     }
 
     public void establishConnection(){

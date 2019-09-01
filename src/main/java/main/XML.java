@@ -188,7 +188,7 @@ public class XML{
         Element sum = (Element) elem.getElementsByTagName("Sum").item(0);
 
         //supposed to contain all available currencies
-        NodeList currencies = sum.getChildNodes();
+        NodeList currencies = sum.getChildNodes(); //TODO: automatically add new currency
         HashMap<String, Integer> currency_sums = new HashMap<String, Integer>();
 
         //get currencies in sum

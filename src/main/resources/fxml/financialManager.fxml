@@ -39,11 +39,15 @@
                                 <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <ScrollPane prefHeight="200.0" prefWidth="200.0">
-                                             <content>
-                                                <VBox fx:id="vbox_grapher" />
-                                             </content>
-                                          </ScrollPane>
+                                          <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <ScrollPane fx:id="vbox_grapher_parent" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                                   <content>
+                                                      <VBox fx:id="vbox_grapher" prefHeight="0.0" prefWidth="0.0" />
+                                                   </content>
+                                                </ScrollPane>
+                                             </children>
+                                          </VBox>
                                        </children>
                                     </AnchorPane>
                                  </content>
