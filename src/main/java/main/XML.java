@@ -23,14 +23,17 @@ import java.io.InputStream;
     so, this is the XML file, supposed to handle xml.
     it's main functions are:
         (for input)
-        addTransaction_noSave(Transaction)
-        save()
+        addTransaction_noSave(Transaction)                  - bare add transaction
+        save()                                              - saves changes conducted to the virtual xml file to hard disk. best used in bulk
 
-        addTransactions(Transaction[] | List<Transaction>)
-        *) addTransaction(Transaction)
+        addTransactions(Transaction[] | List<Transaction>)  - add and save a list of transactions
+        *) addTransaction(Transaction)                      - adds and saves one transaction. not a good idea. experimental.
+
+
         (for output)
-        getSources()
-        getTransactions(Source, start, end){
+        getSources()                                        - get all available sources as listed in the xml file.
+        getSum(source)                                      - returns the current sum of the source.
+        getTransactions(Source, start, end){                - gets all transactions from a certain source by index selection. return an array of transactions.
             source - source name; String.
             start;end - int: get transactions from source start to end.
             [end not inclusive.]
@@ -48,6 +51,7 @@ import java.io.InputStream;
             this is just for supervising it's actions.
 
             yes, the class seems a bit messy, but it's well organized via documentation.
+            I hate xml on java, but if it works it works.
 ***/
 public class XML{
 
@@ -130,31 +134,32 @@ public class XML{
             Element elem = this.getSource(source);
             return getSum(elem);
         }
-        public List<Transaction.Currency> getSum(Element source){
+    public List<Transaction.Currency> getSum(Element source){
 
-                Element elem = source;
-                /*get the sum*/
-                Element sum = (Element) elem.getElementsByTagName("Sum").item(0);
+            Element elem = source;
+            /*get the sum*/
+            Element sum = (Element) elem.getElementsByTagName("Sum").item(0);
 
-                ArrayList<Transaction.Currency> returnCurrencies = new ArrayList<Transaction.Currency>();
+            ArrayList<Transaction.Currency> returnCurrencies = new ArrayList<Transaction.Currency>();
 
-                //supposed to contain all available currencies
-                NodeList currencies = sum.getChildNodes();
-                for(int i=0; i<currencies.getLength(); i++){
+            //supposed to contain all available currencies
+            NodeList currencies = sum.getChildNodes();
+            for(int i=0; i<currencies.getLength(); i++){
 
-                    try{
+                try{
 
-                        String type = ((Element) currencies.item(i)).getAttribute("type");
-                        int inte = Integer.parseInt(((Element) currencies.item(i)).getAttribute("int"));
-                        returnCurrencies.add(new Transaction.Currency(inte, type));
-                    }catch(Exception e){
+                    String type = ((Element) currencies.item(i)).getAttribute("type");
+                    int inte = Integer.parseInt(((Element) currencies.item(i)).getAttribute("int"));
+                    returnCurrencies.add(new Transaction.Currency(inte, type));
+                }catch(Exception e){
 
-                        System.out.println(currencies.item(i));
-                    }
+                    System.out.println(currencies.item(i));
                 }
-
-                return returnCurrencies;
             }
+
+            return returnCurrencies;
+        }
+
 /*
 <Transactions>
     <Transaction datetime="">
@@ -173,9 +178,6 @@ public class XML{
     public void addTransaction_noSave(Transaction transaction){
 
         Element elem = this.getSource(transaction.source);
-
-        System.out.println("document: " + document);
-        System.out.println("element: " + elem);
         Element Transactions = (Element) elem.getElementsByTagName("Transactions").item(0);
 
         Element ntransaction = document.createElement("Transaction");
@@ -187,48 +189,53 @@ public class XML{
         /*get the sum*/
         Element sum = (Element) elem.getElementsByTagName("Sum").item(0);
 
-        //supposed to contain all available currencies
-        NodeList currencies = sum.getChildNodes(); //TODO: automatically add new currency
+        NodeList currencies = sum.getChildNodes();
         HashMap<String, Integer> currency_sums = new HashMap<String, Integer>();
 
-        //get currencies in sum
+        //create a currency to sum map:
         for(int i=0; i<currencies.getLength(); i++){
 
-            try{
-
-                String type = ((Element) currencies.item(i)).getAttribute("type");
-                int namount = Integer.parseInt(((Element) currencies.item(i)).getAttribute("int"));
-                currency_sums.put(type, namount);
-            }catch(Exception e){
-
-                System.out.println(currencies.item(i));
-            }
+            if(currencies.item(i).getNodeType() == Node.TEXT_NODE) continue;
+            String type = ((Element) currencies.item(i)).getAttribute("type");
+            int namount = Integer.parseInt(((Element) currencies.item(i)).getAttribute("int"));
+            currency_sums.put(type, namount);
         }
 
+        //actually converts the entries to xml
+        //update the map and sum for new currencies if necessary.
         for(Transaction.Currency entry : transaction.amount){
+
                 Element currency = document.createElement("currency");
 
                 currency.setAttribute("type", entry.coinType);
                 currency.setAttribute("int", Integer.toString(entry.inte));
                 amount.appendChild(currency);
 
-                if(! currency_sums.containsKey(entry.coinType)) sum.appendChild(currency);
+                //fixed bug: instead of appending currency, append a copy of currency
+                if(!currency_sums.containsKey(entry.coinType)){
 
-                currency_sums.put(entry.coinType, currency_sums.containsKey(entry.coinType) ?
-                                    currency_sums.get(entry.coinType) : 0
+                    Element currency_copy = document.createElement("currency");
+
+                    currency_copy.setAttribute("type", entry.coinType);
+                    currency_copy.setAttribute("int", Integer.toString(entry.inte));
+                    sum.appendChild(currency_copy);
+                }
+
+                currency_sums.put(entry.coinType, (currency_sums.containsKey(entry.coinType) ?
+                                    currency_sums.get(entry.coinType) : 0)
                                     + entry.inte);
         }
 
-        //save sum
-        for(int i=0; i < currencies.getLength(); i++){
-            try{
-                Element current = (Element) currencies.item(i);
-                current.setAttribute("int", Integer.toString(currency_sums.get(current.getAttribute("type"))));
-            }catch(Exception e){
+        //update currencies since sum may have new child nodes.
+        currencies = sum.getChildNodes();
 
-                System.out.println("bad currency: " + currencies.item(i));
-                e.printStackTrace();
-            }
+        //save sum to currencies:
+        for(int i=0; i < currencies.getLength(); i++){
+
+            if(currencies.item(i).getNodeType() == Node.TEXT_NODE || currencies.item(i) == null) continue;
+
+            Element current = (Element) currencies.item(i);
+            current.setAttribute("int", Integer.toString(currency_sums.get(current.getAttribute("type"))));
         }
 
         ntransaction.appendChild(description);
@@ -265,9 +272,8 @@ public class XML{
             StreamResult result = new StreamResult(file);
 
             //get and save sum
-
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "1");
             transformer.transform(source, result);
         }catch(Exception e){
 

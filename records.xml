@@ -1,57 +1,136 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Sources>
       
+  
   <Source value="Cash">
             
+    
+    <Transactions>
+                
+      
+      <Transaction datetime="1567692751846">
+                
+        <description>hello	</description>
+                
+        <amount/>
+              
+      </Transaction>
+            
+      <Transaction datetime="1567692838475">
+                
+        <description>goodbye</description>
+                
+        <amount>
+                    
+          <currency int="200" type="nis"/>
+                  
+        </amount>
+              
+      </Transaction>
+          
+    </Transactions>
+            
+    
+    <Sum>
+                
+      
+      <currency int="300" type="nis"/>
+          
+    </Sum>
+                        
+  
+  
+  </Source>
+      
+  
+  <Source value="Bank Account">
+            
+    
+    <Transactions>
+                  
+      
+      <Transaction datetime="1567348719309">
+                        
+        
+        <description>fuck money</description>
+                        
+        
+        <amount/>
+                      
+      
+      </Transaction>
+                  
+      
+      <Transaction datetime="1567349615939">
+                        
+        
+        <description>100</description>
+                        
+        
+        <amount>
+                              
+          
+          <currency int="100" type="nis"/>
+                            
+        
+        </amount>
+                      
+      
+      </Transaction>
+                
+    
+    </Transactions>
+            
+    
+    <Sum>
+                  
+      
+      <currency int="200" type="nis"/>
+                
+    
+    </Sum>
+          
+  
+  </Source>
+      
+  
+  <Source value="Bitcoin">
+            
+    
     <Transactions>
               
-      <Transaction datetime="1567341293701">
-        <description>paid some cash to someone gay</description>
-        <amount/>
+      <Transaction datetime="1567693840251">
+        <description>hello bo</description>
+        <amount>
+          <currency int="100" type="nis"/>
+        </amount>
       </Transaction>
     </Transactions>
             
+    
     <Sum>
               
       <currency int="100" type="nis"/>
     </Sum>
-        
+          
+  
   </Source>
       
-  <Source value="Bank Account">
-            
-    <Transactions>
-
-        </Transactions>
-            
-    <Sum>
-            
-        </Sum>
-        
-  </Source>
-      
-  <Source value="Bitcoin">
-            
-    <Transactions>
-
-        </Transactions>
-            
-    <Sum>
-
-        </Sum>
-        
-  </Source>
-      
+  
   <Source value="Mastercard">
             
+    
     <Transactions>
 
         </Transactions>
             
+    
     <Sum>
 
         </Sum>
-        
-  </Source>
+          
   
+  </Source>
+    
+
 </Sources>
